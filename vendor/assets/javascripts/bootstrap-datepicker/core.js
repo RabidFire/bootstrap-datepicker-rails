@@ -353,10 +353,20 @@
 			var zIndex = parseInt(this.element.parents().filter(function() {
 							return $(this).css('z-index') != 'auto';
 						}).first().css('z-index'))+10;
-			var offset = this.component ? this.component.parent().offset() : this.element.offset();
+			
+			var placementEl = this.component ? this.component.parent() : this.element;
+			var offset = placementEl.offset();
+			var hasFixedParent = false;
+			placementEl.parents().each(function(){
+				if ($(this).css('position') == 'fixed') {
+					hasFixedParent = true;
+				}
+			});
+
 			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(true);
+
 			this.picker.css({
-				top: offset.top + height,
+				top: offset.top + height - (hasFixedParent ? $(window).scrollTop() : 0),
 				left: offset.left,
 				zIndex: zIndex
 			});
